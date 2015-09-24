@@ -4,8 +4,11 @@ from platform import system
 from setuptools import setup, find_packages
 
 requirements = []
-if system() == 'Linux':
+sys_os = system().lower()
+if sys_os == 'linux':
     requirements.append('pyelftools')
+elif sys_os == 'darwin':
+    requirements.append('machotools')
 
 setup(name='rpathology',
       version='0.0.1',

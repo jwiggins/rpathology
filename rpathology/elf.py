@@ -11,7 +11,17 @@ def _elf_type(path):
         return elf.header['e_type']
 
 
-def is_elf(path):
+def build_rpath(root, lib_dir, file_path):
+    """ Constructs an RPATH for a file.
+    """
+    parts = ['$ORIGIN']
+    moves = [op.relpath(root, op.dirname(file_path)),
+             op.relpath(lib_dir, root)]
+    parts.extend([m for m in moves if m != '.'])
+    return op.join(*parts)
+
+
+def is_executable(path):
     """ Returns True if a file is an ELF file
     """
     try:

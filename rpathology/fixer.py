@@ -6,7 +6,7 @@ import glob
 import os
 import os.path as op
 
-from .elf import is_elf, get_rpaths, set_rpaths
+from .api import build_rpath, is_executable, get_rpaths, set_rpaths
 
 
 def visit_hierarchy(path, file_glob, visitor, **kwargs):
@@ -21,20 +21,13 @@ def visit_hierarchy(path, file_glob, visitor, **kwargs):
 def fix_rpaths(root, lib_dirs, path, append=False):
     """ Change the RPATH entry for a single executable.
     """
-    if not is_elf(path):
-        print('{} is not an ELF file!'.format(path))
+    if not is_executable(path):
+        print('{} is not an executable file!'.format(path))
         return
-
-    def build_rpath(lib_dir, file_path):
-        parts = ['$ORIGIN']
-        moves = [op.relpath(root, op.dirname(file_path)),
-                 op.relpath(lib_dir, root)]
-        parts.extend([m for m in moves if m != '.'])
-        return op.join(*parts)
 
     rpaths = get_rpaths(path)
     if len(rpaths) > 0:
-        new_rpaths = [build_rpath(ld, path) for ld in lib_dirs]
+        new_rpaths = [build_rpath(root, ld, path) for ld in lib_dirs]
         if append:
             new_rpaths = rpaths + new_rpaths
 

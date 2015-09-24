@@ -5,15 +5,15 @@ import glob
 import os
 import os.path as op
 
-from .elf import is_elf, get_rpaths
+from .api import is_executable, get_rpaths
 
 
 def show_rpaths(path):
     """ Change the RPATH entry for a single executable.
     """
     shortpath = op.basename(path)
-    if not is_elf(path):
-        print('{} is not an ELF file!'.format(shortpath))
+    if not is_executable(path):
+        print('{} is not an executable file!'.format(shortpath))
         return
 
     rpaths = get_rpaths(path)
