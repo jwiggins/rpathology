@@ -1,3 +1,4 @@
+import os.path as op
 import subprocess
 
 from elftools.common.exceptions import ELFError
