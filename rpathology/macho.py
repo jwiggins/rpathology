@@ -20,6 +20,12 @@ def is_executable(path):
     return is_macho(path)
 
 
+def get_missing_libraries(path):
+    """ Return a list of missing libraries for a given executable.
+    """
+    raise NotImplementedError
+
+
 def get_rpaths(path):
     """ Get all the RPATH entries for a mach-o file.
     """

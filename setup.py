@@ -21,6 +21,7 @@ setup(name='rpathology',
       entry_points={
           'console_scripts': [
               'rpath-fixer = rpathology.fixer:main',
+              'rpath-missing = rpathology.list:main',
               'rpath-show = rpathology.show:main',
           ],
       },

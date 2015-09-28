@@ -1,15 +1,47 @@
 import os.path as op
+import re
 import subprocess
+import sys
 
 from elftools.common.exceptions import ELFError
 from elftools.elf.dynamic import DynamicSection
 from elftools.elf.elffile import ELFFile
 
 
+PY3K = sys.version_info > (3, 0)
+MISSING_LIB_REGEX = re.compile(r'.+(not found).+')
+
+def _bytes2str(b):
+    if PY3K:
+        return b.decode('utf-8')
+    else:
+        return b
+
+
 def _elf_type(path):
     with open(path, 'rb') as fp:
         elf = ELFFile(fp)
         return elf.header['e_type']
+
+
+def _get_missing_libraries(path):
+    """ Shell out to ldd to get the library references that can't be resolved.
+    """
+    cmdline = ["ldd", path]
+    p = subprocess.Popen(cmdline, stdout=subprocess.PIPE)
+
+    missing = []
+    try:
+        outs, _ = p.communicate()
+        outs = _bytes2str(outs)
+        for line in outs.split('\n'):
+            if MISSING_LIB_REGEX.match(line):
+                libname = line.split('=>')[0].strip()
+                missing.append(libname)
+    except subprocess.TimeoutExpired:
+        p.kill()
+
+    return missing
 
 
 def build_rpath(root, lib_dir, file_path):
@@ -31,6 +63,16 @@ def is_executable(path):
         return True
     except ELFError:
         return False
+
+
+def get_missing_libraries(path):
+    """ Return a list of missing libraries for a given executable.
+    """
+    shortpath = op.basename(path)
+    if not is_executable(path):
+        return []
+
+    return _get_missing_libraries(path)
 
 
 def get_rpaths(path):
