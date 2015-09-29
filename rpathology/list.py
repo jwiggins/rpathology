@@ -40,7 +40,7 @@ def main():
                    'hierarchy')
     parser = argparse.ArgumentParser(description=description,
                                      formatter_class=argparse.HelpFormatter)
-    parser.add_argument('--file-glob', '-f', default='*',
+    parser.add_argument('--file-glob', '-g', default='*',
                         help='The glob used to locate executables.')
     parser.add_argument('--directory', '-d', required=True,
                         help='The root directory of the executables.')
