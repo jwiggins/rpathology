@@ -4,9 +4,6 @@ import argparse
 import glob
 import os
 import os.path as op
-import re
-from subprocess import Popen, PIPE, TimeoutExpired
-import sys
 
 from .api import is_executable, get_missing_libraries
 
