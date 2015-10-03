@@ -3,11 +3,13 @@ import os.path as op
 from machotools.detect import is_macho
 from machotools.macho_rewriter import rewriter_factory
 
+LOADER_PATH = '@loader_path'
+
 
 def build_rpath(root, lib_dir, file_path):
     """ Constructs an RPATH for a file.
     """
-    parts = ['@loader_path']
+    parts = [LOADER_PATH]
     moves = [op.relpath(root, op.dirname(file_path)),
              op.relpath(lib_dir, root)]
     parts.extend([m for m in moves if m != '.'])
@@ -23,7 +25,15 @@ def is_executable(path):
 def get_missing_libraries(path):
     """ Return a list of missing libraries for a given executable.
     """
-    raise NotImplementedError
+    missing = []
+    loader_path = op.dirname(path)
+    rewriter = rewriter_factory(path)
+    for dependency in rewriter.dependencies:
+        if dependency.startswith(LOADER_PATH):
+            dependency = loader_path + dependency[len(LOADER_PATH):]
+        if not op.exists(dependency):
+            missing.append(op.basename(dependency))
+    return missing
 
 
 def get_rpaths(path):
