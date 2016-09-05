@@ -52,7 +52,7 @@ def main():
                               'was not one.'))
     args = parser.parse_args()
 
-    exe_root = op.abspath(op.normpath(args.executable_root))
+    exe_root = op.abspath(op.normpath(args.directory))
     lib_dirs = [op.abspath(op.normpath(d)) for d in args.lib_dir]
     visitor = partial(fix_rpaths, exe_root, lib_dirs)
     visit_hierarchy(exe_root, args.file_glob, visitor,
