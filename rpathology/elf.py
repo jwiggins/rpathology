@@ -7,9 +7,9 @@ from elftools.common.exceptions import ELFError
 from elftools.elf.dynamic import DynamicSection
 from elftools.elf.elffile import ELFFile
 
-
 PY3K = sys.version_info > (3, 0)
 MISSING_LIB_REGEX = re.compile(r'.+(not found).+')
+
 
 def _bytes2str(b):
     if PY3K:
@@ -68,7 +68,6 @@ def is_executable(path):
 def get_missing_libraries(path):
     """ Return a list of missing libraries for a given executable.
     """
-    shortpath = op.basename(path)
     if not is_executable(path):
         return []
 

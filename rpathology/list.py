@@ -5,7 +5,7 @@ import glob
 import os
 import os.path as op
 
-from .api import is_executable, get_missing_libraries
+from .api import get_missing_libraries
 
 
 def _show_misses(misses, root):
