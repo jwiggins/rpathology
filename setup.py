@@ -11,7 +11,7 @@ elif sys_os == 'darwin':
     requirements.append('machotools')
 
 setup(name='rpathology',
-      version='0.0.3',
+      version='0.0.4',
       license='MIT',
       author='John Wiggins',
       author_email='john.wiggins@xfel.eu',
