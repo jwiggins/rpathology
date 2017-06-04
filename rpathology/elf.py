@@ -1,21 +1,14 @@
 import os.path as op
 import re
 import subprocess
-import sys
 
 from elftools.common.exceptions import ELFError
 from elftools.elf.dynamic import DynamicSection
 from elftools.elf.elffile import ELFFile
 
-PY3K = sys.version_info > (3, 0)
+from .compat import bytes2str
+
 MISSING_LIB_REGEX = re.compile(r'.+(not found).+')
-
-
-def _bytes2str(b):
-    if PY3K:
-        return b.decode('utf-8')
-    else:
-        return b
 
 
 def _elf_type(path):
@@ -33,7 +26,7 @@ def _get_missing_libraries(path):
     missing = []
     try:
         outs, _ = p.communicate()
-        outs = _bytes2str(outs)
+        outs = bytes2str(outs)
         for line in outs.split('\n'):
             if MISSING_LIB_REGEX.match(line):
                 libname = line.split('=>')[0].strip()
