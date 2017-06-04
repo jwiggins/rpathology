@@ -6,7 +6,8 @@ import glob
 import os
 import os.path as op
 
-from .api import build_rpath, is_executable, get_rpaths, set_rpaths
+from .api import (build_rpath, is_executable, get_rpaths,
+                  make_library_loads_relative, set_rpaths)
 
 
 def visit_hierarchy(path, file_glob, visitor, **kwargs):
@@ -24,6 +25,10 @@ def fix_rpaths(root, lib_dirs, path, append=False, force=False):
     if not is_executable(path):
         print('{} is not an executable file!'.format(path))
         return
+
+    for ld in lib_dirs:
+        # NOTE: This is a no-op for ELF
+        make_library_loads_relative(path, ld)
 
     rpaths = get_rpaths(path)
     if force or len(rpaths) > 0:

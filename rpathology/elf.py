@@ -91,6 +91,12 @@ def get_rpaths(path):
     return rpaths
 
 
+def make_library_loads_relative(path, with_prefix):
+    """ Nothing to do. Just mirror the Mach-O function.
+    """
+    pass
+
+
 def set_rpaths(path, rpaths):
     """ Set the RPATH for an ELF binary by shelling out to patchelf.
     """

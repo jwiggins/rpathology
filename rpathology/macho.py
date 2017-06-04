@@ -1,4 +1,5 @@
 import os.path as op
+import re
 
 from machotools.detect import is_macho
 from machotools.macho_rewriter import rewriter_factory
@@ -42,6 +43,29 @@ def get_rpaths(path):
     rewriter = rewriter_factory(path)
     rpaths = [p for p in rewriter.rpaths]
     return rpaths
+
+
+def make_library_loads_relative(path, prefix):
+    """ Rewrite all LC_LOAD_DYLIB commands in a given executable at `path` with
+    names starting with `prefix` to @rpath<... everything after prefix>
+    """
+    if prefix[-1] == '/':
+        prefix = prefix[:-1]
+    prefix_len = len(prefix)
+
+    with rewriter_factory(path) as rewriter:
+        for dep in rewriter.dependencies:
+            if not dep.startswith(prefix):
+                continue
+            replace = '@rpath' + dep[prefix_len:]
+            rewriter.change_dependency(re.escape(dep), replace)
+
+        # .dylib files should change their install_name too!
+        if hasattr(rewriter, 'install_name'):
+            install_name = rewriter.install_name
+            if install_name.startswith(prefix):
+                new_install_name = '@rpath' + install_name[prefix_len:]
+                rewriter.install_name = new_install_name
 
 
 def set_rpaths(path, rpaths):
