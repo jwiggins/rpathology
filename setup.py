@@ -9,7 +9,7 @@ if sys_os == 'linux':
     requirements.append('pyelftools')
 
 setup(name='rpathology',
-      version='0.0.6',
+      version='0.0.7',
       license='MIT',
       author='John Wiggins',
       author_email='john.wiggins@xfel.eu',
